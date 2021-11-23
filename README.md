@@ -1,7 +1,7 @@
 # Projet de développement d'application
 
 ## Taches à réaliser :
-- [] Test
+- [ ] Test
 
 ## CARRAY Aurélien
 ## KOENIG Estebann
