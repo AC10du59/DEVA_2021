@@ -10,6 +10,7 @@
 - [ ] Créer les bateaux
 - [ ] Placer les bateaux
 - [ ] Récupérer les coordonnées du tir
+- [ ] Historique des tirs en utilisant ABR 
 - [ ] Analyser le tir
 - [ ] Fin de partie
 
