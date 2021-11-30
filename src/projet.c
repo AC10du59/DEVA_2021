@@ -108,9 +108,9 @@ void affiche_grille(int grille[TAILLE][TAILLE]){
     for(i = 0; i < TAILLE; i++){
         printf(" %d  ", i);
         for(j = 0; j < TAILLE; j++){
-            if(grille[i][j]==0) printf("~ ");
-            else if(grille[i][j]==1) printf("x ");
-            else if(grille[i][j]==2) printf("o ");
+            if(grille[j][i]==0) printf("~ ");
+            else if(grille[j][i]==1) printf("x ");
+            else if(grille[j][i]==2) printf("o ");
         }
     printf("\n");
     }
@@ -118,6 +118,7 @@ void affiche_grille(int grille[TAILLE][TAILLE]){
 
 int est_valide(int x, int y, int direction, int taille, int grille[TAILLE][TAILLE]){
     int i;    
+    // vérifier la direction
     if(x>=0 && x<=9 && y>=0 && y<=9){
         for(i = 0; i < taille; i++){
             if(direction==1){
@@ -168,7 +169,25 @@ void placer_bateau(int taille, int grille[TAILLE][TAILLE]){
         scanf("%d", &direction);
     } while(est_valide(choix_X, choix_Y, direction, taille, grille)==0);
 
-
+    int i;
+    for(i = 0; i < taille; i++){
+        if(direction==1){
+        /*haut*/            
+            grille[choix_X][choix_Y-i] = 1; 
+        }
+        else if(direction==2){
+        /*droite*/            
+            grille[choix_X+i][choix_Y] = 1;
+        }
+        else if(direction==3){
+        /*bas*/            
+            grille[choix_X][choix_Y+i] = 1;
+        }
+        else if(direction==4){
+        /*gauche*/            
+            grille[choix_X-i][choix_Y] = 1;
+        }
+    }
 }
 
 
@@ -178,7 +197,9 @@ int main(int argc, char *argv[]) {
     //menu();
     int plateau1[TAILLE][TAILLE];
     initialiser_grille(plateau1);
-    placer_bateau(3,plateau1);
+    for(int i = 1; i < 3; i++){
+        placer_bateau(i,plateau1);
+    }   
     affiche_grille(plateau1);
     return 0;
 }
