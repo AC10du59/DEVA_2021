@@ -82,7 +82,7 @@ typedef struct une_case {
 
 typedef struct navire {
     char * nom;
-    int sens; /*0 haut 1 droite 2 bas 3 gauche*/
+    int sens; /*1 haut 2 droite 3 bas 4 gauche*/
     Case premiere_case;
     int taille;
 } Navire;
@@ -103,12 +103,10 @@ void initialiser_grille(int grille[TAILLE][TAILLE]){
 
 void affiche_grille(int grille[TAILLE][TAILLE]){
     int i, j;
-    //a modifier par rapport a la taille
-    printf("    1 2 3 4 5 6 7 8 9 10\n");
+    printf("    0 1 2 3 4 5 6 7 8 9\n");
 
     for(i = 0; i < TAILLE; i++){
-        if(i > 8)printf("%d  ", i+1);
-        else printf(" %d  ", i+1);
+        printf(" %d  ", i);
         for(j = 0; j < TAILLE; j++){
             if(grille[i][j]==0) printf("~ ");
             else if(grille[i][j]==1) printf("x ");
@@ -118,26 +116,60 @@ void affiche_grille(int grille[TAILLE][TAILLE]){
     }
 }
 
-int est_valide(int x, int y, int grille[TAILLE][TAILLE]){
-    if(x>=0 && x<=TAILLE && y>=0 && y<=TAILLE){
-        if(grille[x][y] == 0){
-            return 1;
+int est_valide(int x, int y, int direction, int taille, int grille[TAILLE][TAILLE]){
+    int i;    
+    if(x>=0 && x<=9 && y>=0 && y<=9){
+        for(i = 0; i < taille; i++){
+            if(direction==1){
+            /*haut*/            
+                if(grille[x][y-i] != 0 || x-i < 0) return 0; 
+            }
+            else if(direction==2){
+            /*droite*/            
+                if(grille[x+i][y] != 0 || y+i > 9) return 0; 
+            }
+            else if(direction==3){
+            /*bas*/            
+                if(grille[x][y+i] != 0 || x+i > 9) return 0; 
+            }
+            else if(direction==4){
+            /*gauche*/            
+                if(grille[x-i][y] != 0 || y-i < 0) return 0; 
+            }
         }
+        return 1;
+
     }
     return 0;
 }
 
-/*
-0 0 0 0 0 0
-0 0 0 0 1 0
-0 0 0 0 1 0
-0 0 0 0 0 0
 
-*/
+void placer_bateau(int taille, int grille[TAILLE][TAILLE]){ 
+    int choix_X = -1;
+    int choix_Y = -1;
+    int direction = -1;    
+    do{
+        clear();
+    
+        affiche_grille(grille);
+
+        printf("\nPlacez le bateau à %d cases.\n\n", taille);
+        printf("Coordonnés de début du navire.\n");
+        printf("-   Ligne : ");
+        scanf("%d", &choix_X);
+        printf("- Colonne : ");
+        scanf("%d", &choix_Y);
+        printf("\n\nDirection du navire.\n");
+        printf(" 1. Haut\n");
+        printf(" 2. Droite\n");
+        printf(" 3. Bas\n");
+        printf(" 4. Gauche\n");
+        printf("Choix : ");
+        scanf("%d", &direction);
+    } while(est_valide(choix_X, choix_Y, direction, taille, grille)==0);
 
 
-
-
+}
 
 
 
@@ -146,6 +178,7 @@ int main(int argc, char *argv[]) {
     //menu();
     int plateau1[TAILLE][TAILLE];
     initialiser_grille(plateau1);
+    placer_bateau(3,plateau1);
     affiche_grille(plateau1);
     return 0;
 }
