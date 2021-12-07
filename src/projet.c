@@ -183,6 +183,32 @@ int est_valide(int x, int y, int direction, int taille, int grille[TAILLE][TAILL
     return 0;
 }
 
+void prochainTour(Joueur *j){
+    int choix = -1;
+    while(choix<0 || choix>9){
+        clear();
+        printf("JOUEUR %d\n", j->id);
+        printf("Voici votre grille : \n\n", j->id);
+        affiche_grille(j->plateau);
+        printf("\n\nAppuyer sur une touche numérique et entrée pour continuer : ");
+        scanf("%d", &choix);
+    }  
+    clear();
+}
+
+void prochainTourTir(Joueur *j){
+    int choix = -1;
+    while(choix<0 || choix>9){
+        clear();
+        printf("JOUEUR %d\n", j->id);
+        printf("Voici votre grille de tirs : \n\n", j->id);
+        affiche_grille(j->tir);
+        printf("\n\nAppuyer sur une touche numérique et entrée pour continuer : ");
+        scanf("%d", &choix);
+    }  
+    clear();
+}
+
 
 void placer_bateau(Joueur *j){
     Navire *bateaux[5] = {creerNavire("Torpilleur", 0, 0, 2, 0), creerNavire("Sous-marin", 0, 0, 3, 0), creerNavire("Contre-torpilleur", 0, 0, 3, 0), creerNavire("Croiseur", 0, 0, 4, 0), creerNavire("Porte-avion", 0, 0, 5, 0)};
@@ -233,6 +259,7 @@ void placer_bateau(Joueur *j){
             }
         }
     }
+    prochainTour(j);
 }
 
 void placerBateauOrdi(int taille, int grille2[TAILLE][TAILLE]){
@@ -266,13 +293,45 @@ void placerBateauOrdi(int taille, int grille2[TAILLE][TAILLE]){
     }
 }
 
+// 0 -> touche | 1 -> plouf
+int touche(int x, int y, Joueur *j){
+    if(j->plateau[x][y] == 1){
+        return 0;
+    }
+    return 1;
+}
+
+void jouer(Joueur *j1, Joueur *j2){
+    int choix_X = -1;
+    int choix_Y = -1;
+    do{
+        clear();
+        printf("JOUEUR %d\n\n", j1->id);
+        affiche_grille(j1->tir);
+        printf("Coordonnés du tir\n");
+        printf("-   Ligne : ");
+        scanf("%d", &choix_X);
+        printf("- Colonne : ");
+        scanf("%d", &choix_Y);
+    } while(choix_X<0 || choix_X>9 || choix_Y<0 || choix_Y>9);
+
+    if(touche(choix_X, choix_Y, j2)==0) j1->tir[choix_X][choix_Y] = 1;
+    else j1->tir[choix_X][choix_Y] = 2;
+
+    //vérifier si le bateau est coulé
+
+    //vérifier si la partie est terminé
+    prochainTourTir(j1);
+}
+
 
 /*------------------------------ FONCTION MAIN -------------------------------*/
 int main(int argc, char *argv[]) {
     //menu();
-    Joueur *j = creerJoueur(1);
-    placer_bateau(j);
-    clear();
-    affiche_grille(j->plateau);
+    Joueur *j1 = creerJoueur(1);
+    placer_bateau(j1);
+    Joueur *j2 = creerJoueur(2);
+    placer_bateau(j2);
+    jouer(j1,j2);
     return 0;
 }
