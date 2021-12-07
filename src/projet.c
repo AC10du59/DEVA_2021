@@ -153,7 +153,7 @@ int nbalea(int borneD, int limite){
 
 int est_valide(int x, int y, int direction, int taille, int grille[TAILLE][TAILLE]){
     int i;
-    // vérifier la direction
+    if(direction < 1 || direction > 4) return 0;
     if(x>=0 && x<=9 && y>=0 && y<=9){
         for(i = 0; i < taille; i++){
             if(direction==1){
