@@ -81,7 +81,6 @@ typedef struct navire {
     int sens; /*1 haut 2 droite 3 bas 4 gauche*/
     int x;
     int y;
-    int orientation;
     int taille;
     int coule; /*0 non 1 oui*/
 } Navire;
@@ -90,6 +89,7 @@ typedef struct joueur {
     int id;
     int plateau[TAILLE][TAILLE];
     int tir[TAILLE][TAILLE];
+    Navire *bateaux[5];
 } Joueur;
 
 /*
@@ -105,17 +105,24 @@ void initialiser_grille(int grille[TAILLE][TAILLE]){
     }
 }
 
-Navire *creerNavire(char *nom, int posX, int posY, int taille, int orientation) {
+Navire *creerNavire(char *nom, int posX, int posY, int taille, int s) {
 	Navire *a = NULL;
     a = (Navire *)malloc(sizeof(Navire));
     a->nom = nom;
-    a->sens = 0;
+    a->sens = s;
     a->x = posX;
     a->y = posY;
-    a->orientation = orientation;
     a->taille = taille;
     a->coule = 0;
     return a;
+}
+
+void initBateau(Navire *bat[5]){
+    bat[0] = creerNavire("Torpilleur", 0, 0, 2, 0);
+    bat[1] = creerNavire("Sous-marin", 0, 0, 3, 0);
+    bat[2] = creerNavire("Contre-torpilleur", 0, 0, 3, 0);
+    bat[3] = creerNavire("Croiseur", 0, 0, 4, 0);
+    bat[4] = creerNavire("Porte-avion", 0, 0, 5, 0);
 }
 
 Joueur *creerJoueur(int id) {
@@ -124,6 +131,7 @@ Joueur *creerJoueur(int id) {
     j->id = id;
     initialiser_grille(j->plateau);
     initialiser_grille(j->tir);
+    initBateau(j->bateaux);
     return j;
 }
 
@@ -196,6 +204,46 @@ void prochainTour(Joueur *j){
     clear();
 }
 
+int * couler(Joueur *j1){
+    static int res[5];
+    int index = 0;
+    for(int bat = 0; bat < 5; bat++){
+        int isBateauTouche = 0;
+        for(int i = 0; i < j1->bateaux[bat]->taille; i++){
+            if(j1->bateaux[bat]->sens==1){
+                /*haut*/
+                if(j1->tir[j1->bateaux[bat]->x-i][j1->bateaux[bat]->y] == 0){
+                    isBateauTouche = -1;                
+                }
+            }
+            else if(j1->bateaux[bat]->sens==2){
+                /*droite*/
+                if(j1->plateau[j1->bateaux[bat]->x][j1->bateaux[bat]->y+i] == 0){
+                    isBateauTouche = -1;      
+                }
+            }   
+            else if(j1->bateaux[bat]->sens==3){
+                /*bas*/
+                if(j1->plateau[j1->bateaux[bat]->x+i][j1->bateaux[bat]->y] == 0){
+                    isBateauTouche = -1;      
+                }
+            }
+            else if(j1->bateaux[bat]->sens==4){
+                /*gauche*/
+                if(j1->plateau[j1->bateaux[bat]->x][j1->bateaux[bat]->y-i] == 0){
+                    isBateauTouche = -1;      
+                }
+            }
+        }
+        if(isBateauTouche==-1){
+            res[bat] = -1;
+        } else {
+            res[bat] = 0;
+        }
+    }
+    return res;
+}
+
 void prochainTourTir(Joueur *j){
     int choix = -1;
     while(choix<0 || choix>9){
@@ -203,7 +251,41 @@ void prochainTourTir(Joueur *j){
         printf("JOUEUR %d\n", j->id);
         printf("Voici votre grille de tirs : \n\n", j->id);
         affiche_grille(j->tir);
-        printf("\n\nAppuyer sur une touche numérique et entrée pour continuer : ");
+        printf("\n");
+
+        int *p;
+        p = couler(j);
+
+        if(p[0]==0){
+            printf("- Torpilleur (2 cases)             FLOTTE\n");
+        } else {
+            printf("- Torpilleur (2 cases)             COULÉ\n");
+        }
+
+        if(p[1]==0){
+            printf("- Sous-marin (3 cases)             FLOTTE\n");
+        } else {
+            printf("- Sous-marin (3 cases)             COULÉ\n");
+        }
+
+        if(p[2]==0){
+            printf("- Contre-torpilleur (3 cases)      FLOTTE\n");
+        } else {
+            printf("- Contre-torpilleur (3 cases)      COULÉ\n");
+        }
+
+        if(p[3]==0){
+            printf("- Croiseur (4 cases)               FLOTTE\n");
+        } else {
+            printf("- Croiseur (4 cases)               COULÉ\n");
+        }
+
+        if(p[4]==0){
+            printf("- Porte-avion (5 cases)            FLOTTE\n");
+        } else {
+            printf("- Porte-avion (5 cases)            COULÉ\n");
+        }
+        printf("\nAppuyer sur une touche numérique et entrée pour continuer : ");
         scanf("%d", &choix);
     }  
     clear();
@@ -211,12 +293,9 @@ void prochainTourTir(Joueur *j){
 
 
 void placer_bateau(Joueur *j){
-    Navire *bateaux[5] = {creerNavire("Torpilleur", 0, 0, 2, 0), creerNavire("Sous-marin", 0, 0, 3, 0), creerNavire("Contre-torpilleur", 0, 0, 3, 0), creerNavire("Croiseur", 0, 0, 4, 0), creerNavire("Porte-avion", 0, 0, 5, 0)};
-
     int currentBateau;
-
     for(currentBateau = 0; currentBateau < 5; currentBateau++){
-        Navire *n = bateaux[currentBateau];
+        Navire *n = j->bateaux[currentBateau];
         int choix_X = -1;
         int choix_Y = -1;
         int direction = -1;
@@ -238,6 +317,10 @@ void placer_bateau(Joueur *j){
             printf("-   Choix : ");
             scanf("%d", &direction);
         } while(est_valide(choix_X, choix_Y, direction, n->taille, j->plateau)==0);
+    
+        j->bateaux[currentBateau]->x = choix_X; 
+        j->bateaux[currentBateau]->y = choix_Y; 
+        j->bateaux[currentBateau]->sens = direction; 
 
         int i;
         for(i = 0; i < n->taille; i++){
@@ -332,6 +415,10 @@ int main(int argc, char *argv[]) {
     placer_bateau(j1);
     Joueur *j2 = creerJoueur(2);
     placer_bateau(j2);
+    jouer(j1,j2);
+    jouer(j1,j2);    
+    jouer(j1,j2);
+    jouer(j1,j2);
     jouer(j1,j2);
     return 0;
 }
