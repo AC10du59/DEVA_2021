@@ -204,44 +204,35 @@ void prochainTour(Joueur *j){
     clear();
 }
 
-int * couler(Joueur *j1){
-    static int res[5];
-    int index = 0;
-    for(int bat = 0; bat < 5; bat++){
-        int isBateauTouche = 0;
-        for(int i = 0; i < j1->bateaux[bat]->taille; i++){
-            if(j1->bateaux[bat]->sens==1){
-                /*haut*/
-                if(j1->tir[j1->bateaux[bat]->x-i][j1->bateaux[bat]->y] == 0){
-                    isBateauTouche = -1;                
-                }
-            }
-            else if(j1->bateaux[bat]->sens==2){
-                /*droite*/
-                if(j1->plateau[j1->bateaux[bat]->x][j1->bateaux[bat]->y+i] == 0){
-                    isBateauTouche = -1;      
-                }
-            }   
-            else if(j1->bateaux[bat]->sens==3){
-                /*bas*/
-                if(j1->plateau[j1->bateaux[bat]->x+i][j1->bateaux[bat]->y] == 0){
-                    isBateauTouche = -1;      
-                }
-            }
-            else if(j1->bateaux[bat]->sens==4){
-                /*gauche*/
-                if(j1->plateau[j1->bateaux[bat]->x][j1->bateaux[bat]->y-i] == 0){
-                    isBateauTouche = -1;      
-                }
+// true = 0 | false = 1
+int couler(Joueur *j1, int bat){
+    for(int i = 0; i < j1->bateaux[bat]->taille; i++){
+        if(j1->bateaux[bat]->sens==1){
+            /*haut*/
+            if(j1->tir[j1->bateaux[bat]->x-i][j1->bateaux[bat]->y] == 0){
+                return 1;                
             }
         }
-        if(isBateauTouche==-1){
-            res[bat] = -1;
-        } else {
-            res[bat] = 0;
+        else if(j1->bateaux[bat]->sens==2){
+            /*droite*/
+            if(j1->plateau[j1->bateaux[bat]->x][j1->bateaux[bat]->y+i] == 0){
+                return 1;   
+            }
+        }   
+        else if(j1->bateaux[bat]->sens==3){
+            /*bas*/
+            if(j1->plateau[j1->bateaux[bat]->x+i][j1->bateaux[bat]->y] == 0){
+                return 1;     
+            }
+        }
+        else if(j1->bateaux[bat]->sens==4){
+            /*gauche*/
+            if(j1->plateau[j1->bateaux[bat]->x][j1->bateaux[bat]->y-i] == 0){
+                return 1;        
+            }
         }
     }
-    return res;
+    return 0;
 }
 
 void prochainTourTir(Joueur *j){
@@ -253,34 +244,31 @@ void prochainTourTir(Joueur *j){
         affiche_grille(j->tir);
         printf("\n");
 
-        int *p;
-        p = couler(j);
-
-        if(p[0]==0){
+        if(couler(j, 0)==1){
             printf("- Torpilleur (2 cases)             FLOTTE\n");
         } else {
             printf("- Torpilleur (2 cases)             COULÉ\n");
         }
 
-        if(p[1]==0){
+        if(couler(j, 1)==1){
             printf("- Sous-marin (3 cases)             FLOTTE\n");
         } else {
             printf("- Sous-marin (3 cases)             COULÉ\n");
         }
 
-        if(p[2]==0){
+        if(couler(j, 2)==1){
             printf("- Contre-torpilleur (3 cases)      FLOTTE\n");
         } else {
             printf("- Contre-torpilleur (3 cases)      COULÉ\n");
         }
 
-        if(p[3]==0){
+        if(couler(j, 3)==1){
             printf("- Croiseur (4 cases)               FLOTTE\n");
         } else {
             printf("- Croiseur (4 cases)               COULÉ\n");
         }
 
-        if(p[4]==0){
+        if(couler(j, 4)==1){
             printf("- Porte-avion (5 cases)            FLOTTE\n");
         } else {
             printf("- Porte-avion (5 cases)            COULÉ\n");
@@ -400,25 +388,59 @@ void jouer(Joueur *j1, Joueur *j2){
 
     if(touche(choix_X, choix_Y, j2)==0) j1->tir[choix_X][choix_Y] = 1;
     else j1->tir[choix_X][choix_Y] = 2;
-
-    //vérifier si le bateau est coulé
-
-    //vérifier si la partie est terminé
     prochainTourTir(j1);
+}
+
+int partieTerminee(Joueur *j1, Joueur *j2){
+    if(couler(j1,0)==0 && couler(j1,1)==0 && couler(j1,2)==0 && couler(j1,3)==0 && couler(j1,4)==0){
+        return 2;
+    }
+
+    if(couler(j2,0)==0 && couler(j2,1)==0 && couler(j2,2)==0 && couler(j2,3)==0 && couler(j2,4)==0){
+        return 1;
+    }
+
+    return 0;
+}
+
+void jouerPartie(){
+    Joueur *j1 = creerJoueur(1);
+    placer_bateau(j1);
+    Joueur *j2 = creerJoueur(2);
+    placer_bateau(j2);
+    
+    int joueur = 0; 
+
+    while(partieTerminee(j1, j2)==0){
+       if(joueur%2==0){
+            jouer(j1,j2);
+        } else {
+            jouer(j2,j1);
+        }
+        joueur++;
+    }
+    int gagnant = partieTerminee(j1, j2);
+
+    clear();
+
+    if(gagnant==1){
+        printf("\nFélicitation au Joueur 1 qui a remporté la partie !!!\n");
+        affiche_grille(j1->tir);
+    } else{
+        printf("\nFélicitation au Joueur 2 qui a remporté la partie !!!\n");
+        affiche_grille(j2->tir);
+    }
+
+    int choix;
+    printf("\nAppuyer sur une touche numérique pour quitter la partie : ");
+    scanf("%d", &choix);
+
 }
 
 
 /*------------------------------ FONCTION MAIN -------------------------------*/
 int main(int argc, char *argv[]) {
     //menu();
-    Joueur *j1 = creerJoueur(1);
-    placer_bateau(j1);
-    Joueur *j2 = creerJoueur(2);
-    placer_bateau(j2);
-    jouer(j1,j2);
-    jouer(j1,j2);    
-    jouer(j1,j2);
-    jouer(j1,j2);
-    jouer(j1,j2);
+    jouerPartie();
     return 0;
 }
