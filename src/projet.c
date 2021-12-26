@@ -206,28 +206,32 @@ void prochainTour(Joueur *j){
 
 // true = 0 | false = 1
 int couler(Joueur *j1, int bat){
-    for(int i = 0; i < j1->bateaux[bat]->taille; i++){
-        if(j1->bateaux[bat]->sens==1){
+
+    int taille = j1->bateaux[bat]->taille;
+    int sens = j1->bateaux[bat]->sens;
+
+    for(int i = 0; i < taille; i++){
+        if(sens==1){
             /*haut*/
             if(j1->tir[j1->bateaux[bat]->x-i][j1->bateaux[bat]->y] == 0){
                 return 1;                
             }
         }
-        else if(j1->bateaux[bat]->sens==2){
+        else if(sens==2){
             /*droite*/
-            if(j1->plateau[j1->bateaux[bat]->x][j1->bateaux[bat]->y+i] == 0){
+            if(j1->tir[j1->bateaux[bat]->x][j1->bateaux[bat]->y+i] == 0){
                 return 1;   
             }
         }   
-        else if(j1->bateaux[bat]->sens==3){
+        else if(sens==3){
             /*bas*/
-            if(j1->plateau[j1->bateaux[bat]->x+i][j1->bateaux[bat]->y] == 0){
+            if(j1->tir[j1->bateaux[bat]->x+i][j1->bateaux[bat]->y] == 0){
                 return 1;     
             }
         }
-        else if(j1->bateaux[bat]->sens==4){
+        else if(sens==4){
             /*gauche*/
-            if(j1->plateau[j1->bateaux[bat]->x][j1->bateaux[bat]->y-i] == 0){
+            if(j1->tir[j1->bateaux[bat]->x][j1->bateaux[bat]->y-i] == 0){
                 return 1;        
             }
         }
@@ -235,7 +239,7 @@ int couler(Joueur *j1, int bat){
     return 0;
 }
 
-void prochainTourTir(Joueur *j){
+void prochainTourTir(Joueur *j, Joueur *j2){
     int choix = -1;
     while(choix<0 || choix>9){
         clear();
@@ -244,31 +248,31 @@ void prochainTourTir(Joueur *j){
         affiche_grille(j->tir);
         printf("\n");
 
-        if(couler(j, 0)==1){
+        if(couler(j2, 0)==1){
             printf("- Torpilleur (2 cases)             FLOTTE\n");
         } else {
             printf("- Torpilleur (2 cases)             COULÉ\n");
         }
 
-        if(couler(j, 1)==1){
+        if(couler(j2, 1)==1){
             printf("- Sous-marin (3 cases)             FLOTTE\n");
         } else {
             printf("- Sous-marin (3 cases)             COULÉ\n");
         }
 
-        if(couler(j, 2)==1){
+        if(couler(j2, 2)==1){
             printf("- Contre-torpilleur (3 cases)      FLOTTE\n");
         } else {
             printf("- Contre-torpilleur (3 cases)      COULÉ\n");
         }
 
-        if(couler(j, 3)==1){
+        if(couler(j2, 3)==1){
             printf("- Croiseur (4 cases)               FLOTTE\n");
         } else {
             printf("- Croiseur (4 cases)               COULÉ\n");
         }
 
-        if(couler(j, 4)==1){
+        if(couler(j2, 4)==1){
             printf("- Porte-avion (5 cases)            FLOTTE\n");
         } else {
             printf("- Porte-avion (5 cases)            COULÉ\n");
@@ -388,7 +392,6 @@ void jouer(Joueur *j1, Joueur *j2){
 
     if(touche(choix_X, choix_Y, j2)==0) j1->tir[choix_X][choix_Y] = 1;
     else j1->tir[choix_X][choix_Y] = 2;
-    prochainTourTir(j1);
 }
 
 int partieTerminee(Joueur *j1, Joueur *j2){
@@ -414,8 +417,10 @@ void jouerPartie(){
     while(partieTerminee(j1, j2)==0){
        if(joueur%2==0){
             jouer(j1,j2);
+            prochainTourTir(j1, j2);
         } else {
             jouer(j2,j1);
+            prochainTourTir(j2, j1);
         }
         joueur++;
     }
@@ -424,10 +429,10 @@ void jouerPartie(){
     clear();
 
     if(gagnant==1){
-        printf("\nFélicitation au Joueur 1 qui a remporté la partie !!!\n");
+        printf("Félicitation au Joueur 1 qui a remporté la partie !!!\n\n");
         affiche_grille(j1->tir);
     } else{
-        printf("\nFélicitation au Joueur 2 qui a remporté la partie !!!\n");
+        printf("Félicitation au Joueur 2 qui a remporté la partie !!!\n\n");
         affiche_grille(j2->tir);
     }
 
