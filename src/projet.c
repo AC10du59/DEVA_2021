@@ -18,15 +18,15 @@ void menu(){
     printf("1. Jouer\n");
     printf("2. Aide\n");
     printf("3. Quitter\n\n");
+    printf("Entrer votre choix : ");
 
-    while(choix!=1 && choix!=2 && choix!=3){
-        printf("Entrer votre choix : ");
-        scanf("%d", &choix);
-    }
+    scanf("%d", &choix);
 
     if(choix == 1) menu_jouer();
     if(choix == 2) menu_aide();
     if(choix == 3) exit(EXIT_SUCCESS);
+
+    menu();
 }
 
 void menu_jouer(){
@@ -42,10 +42,8 @@ void menu_jouer(){
 
     scanf("%d", &choix);
 
-    if(choix == 1 || choix == 2){
-        printf("OK --> choix = %d\n", choix);
-        exit(EXIT_SUCCESS);
-    }
+    if(choix == 1) jouerPartieOrdi();
+    if(choix == 2) jouerPartie();
     if(choix == 3) menu();
     if(choix == 4) exit(EXIT_SUCCESS);
 
@@ -151,12 +149,7 @@ void affiche_grille(int grille[TAILLE][TAILLE]){
 }
 
 int nbalea(int borneD, int limite){
-    int nombre = 0;
-    const int MIN = borneD, MAX = limite;
-    srand(time(NULL)); // Initialisation de la donnée seed
-
-    nombre = (rand() % (MAX + 1 - MIN)) + MIN;// MIN <= nombre <= MAX
-    return nombre ;
+    return rand() % limite + borneD;
 }
 
 int est_valide(int x, int y, int direction, int taille, int grille[TAILLE][TAILLE]){
@@ -204,7 +197,6 @@ void prochainTour(Joueur *j){
     clear();
 }
 
-
 int nbBateauEnVie(Joueur *j1){
     int compteur = 0;
 
@@ -229,9 +221,32 @@ void prochainTourTir(Joueur *j){
         int cases = 17 - nbBateauEnVie(j);
         
         if(cases == 0 || cases == 1){
-            printf("Il vous reste %d case à couler pour remporter la partie.\n", cases);
+            printf("Il reste %d case à couler pour remporter la partie.\n", cases);
         } else {
-            printf("Il vous reste %d cases à couler pour remporter la partie.\n", cases);
+            printf("Il reste %d cases à couler pour remporter la partie.\n", cases);
+        }
+       
+        printf("\nAppuyer sur une touche numérique et entrée pour continuer : ");
+        scanf("%d", &choix);
+    }  
+    clear();
+}
+
+void prochainTourTirOrdi(Joueur *j){
+    int choix = -1;
+    while(choix<0 || choix>9){
+        clear();
+        printf("ORDI\n", j->id);
+        printf("Voici la grille de tirs de l'ordi : \n\n");
+        affiche_grille(j->tir);
+        printf("\n");
+
+        int cases = 17 - nbBateauEnVie(j);
+        
+        if(cases == 0 || cases == 1){
+            printf("Il reste %d case à couler pour remporter la partie.\n", cases);
+        } else {
+            printf("Il reste %d cases à couler pour remporter la partie.\n", cases);
         }
        
         printf("\nAppuyer sur une touche numérique et entrée pour continuer : ");
@@ -294,33 +309,41 @@ void placer_bateau(Joueur *j){
     prochainTour(j);
 }
 
-void placerBateauOrdi(int taille, int grille2[TAILLE][TAILLE]){
-    int choix_X = -1;
-    int choix_Y = -1;
-    int direction = -1;
-    do{
-        choix_X=nbalea(0,9);
-        choix_Y=nbalea(0,9);
-        direction=nbalea(1,4);
-    } while(est_valide(choix_X, choix_Y, direction, taille, grille2)==0);
+void placerBateauOrdi(Joueur *j){
+    int currentBateau;
+    for(currentBateau = 0; currentBateau < 5; currentBateau++){
+        Navire *n = j->bateaux[currentBateau];
+        int choix_X = -1;
+        int choix_Y = -1;
+        int direction = -1;
+        do{
+            choix_X = nbalea(0,9);
+            choix_Y = nbalea(0,9);
+            direction = nbalea(1,4);
+        } while(est_valide(choix_X, choix_Y, direction, n->taille, j->plateau)==0);
+    
+        j->bateaux[currentBateau]->x = choix_X; 
+        j->bateaux[currentBateau]->y = choix_Y; 
+        j->bateaux[currentBateau]->sens = direction; 
 
-    int i;
-    for(i = 0; i < taille; i++){
-        if(direction==1){
-        /*haut*/
-            grille2[choix_X-i][choix_Y] = 1;
-        }
-        else if(direction==2){
-        /*droite*/
-            grille2[choix_X][choix_Y+i] = 1;
-        }
-        else if(direction==3){
-        /*bas*/
-            grille2[choix_X+i][choix_Y] = 1;
-        }
-        else if(direction==4){
-        /*gauche*/
-            grille2[choix_X][choix_Y-i] = 1;
+        int i;
+        for(i = 0; i < n->taille; i++){
+            if(direction==1){
+                /*haut*/
+                j->plateau[choix_X-i][choix_Y] = 1;
+            }
+            else if(direction==2){
+                /*droite*/
+                j->plateau[choix_X][choix_Y+i] = 1;
+            }
+            else if(direction==3){
+                /*bas*/
+                j->plateau[choix_X+i][choix_Y] = 1;
+            }
+            else if(direction==4){
+                /*gauche*/
+                j->plateau[choix_X][choix_Y-i] = 1;
+            }
         }
     }
 }
@@ -351,6 +374,18 @@ void jouer(Joueur *j1, Joueur *j2){
     else j1->tir[choix_X][choix_Y] = 2;
 }
 
+void jouerOrdi(Joueur *j1, Joueur *j2){
+    int choix_X = -1;
+    int choix_Y = -1;
+    do{
+        choix_X = nbalea(0,9);
+        choix_Y = nbalea(0,9);
+    } while(choix_X<0 || choix_X>9 || choix_Y<0 || choix_Y>9);
+
+    if(touche(choix_X, choix_Y, j2)==0) j1->tir[choix_X][choix_Y] = 1;
+    else j1->tir[choix_X][choix_Y] = 2;
+}
+
 int partieTerminee(Joueur *j1, Joueur *j2){
     if(nbBateauEnVie(j1)==17) return 1;
     if(nbBateauEnVie(j2)==17) return 2;
@@ -359,6 +394,7 @@ int partieTerminee(Joueur *j1, Joueur *j2){
 }
 
 void jouerPartie(){
+    clear();
     Joueur *j1 = creerJoueur(1);
     placer_bateau(j1);
     Joueur *j2 = creerJoueur(2);
@@ -394,10 +430,46 @@ void jouerPartie(){
 
 }
 
+void jouerPartieOrdi(){
+    clear();
+    Joueur *j1 = creerJoueur(1);
+    placer_bateau(j1);
+    Joueur *ordi = creerJoueur(2);
+    placerBateauOrdi(ordi);
+    
+    int joueur = 0; 
+
+    while(partieTerminee(j1, ordi)==0){
+       if(joueur%2==0){
+            jouer(j1,ordi);
+            prochainTourTir(j1);
+        } else {
+            jouerOrdi(ordi,j1);
+            prochainTourTirOrdi(ordi);
+        }
+        joueur++;
+    }
+    int gagnant = partieTerminee(j1, ordi);
+
+    clear();
+
+    if(gagnant==1){
+        printf("Félicitation au Joueur 1 qui a remporté la partie !!!\n\n");
+        affiche_grille(j1->tir);
+    } else{
+        printf("Félicitation à l'ordi qui a remporté la partie !!!\n\n");
+        affiche_grille(ordi->tir);
+    }
+
+    int choix;
+    printf("\nAppuyer sur une touche numérique pour quitter la partie : ");
+    scanf("%d", &choix);
+
+}
+
 
 /*------------------------------ FONCTION MAIN -------------------------------*/
 int main(int argc, char *argv[]) {
-    //menu();
-    jouerPartie();
+    menu();
     return 0;
 }
