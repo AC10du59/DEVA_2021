@@ -204,42 +204,20 @@ void prochainTour(Joueur *j){
     clear();
 }
 
-// true = 0 | false = 1
-int couler(Joueur *j1, int bat){
 
-    int taille = j1->bateaux[bat]->taille;
-    int sens = j1->bateaux[bat]->sens;
+int nbBateauEnVie(Joueur *j1){
+    int compteur = 0;
 
-    for(int i = 0; i < taille; i++){
-        if(sens==1){
-            /*haut*/
-            if(j1->tir[j1->bateaux[bat]->x-i][j1->bateaux[bat]->y] == 0){
-                return 1;                
-            }
-        }
-        else if(sens==2){
-            /*droite*/
-            if(j1->tir[j1->bateaux[bat]->x][j1->bateaux[bat]->y+i] == 0){
-                return 1;   
-            }
-        }   
-        else if(sens==3){
-            /*bas*/
-            if(j1->tir[j1->bateaux[bat]->x+i][j1->bateaux[bat]->y] == 0){
-                return 1;     
-            }
-        }
-        else if(sens==4){
-            /*gauche*/
-            if(j1->tir[j1->bateaux[bat]->x][j1->bateaux[bat]->y-i] == 0){
-                return 1;        
-            }
+    for(int i = 0; i < TAILLE; i++){
+        for(int j = 0; j < TAILLE; j++){
+            if(j1->tir[i][j] == 1) compteur++;
         }
     }
-    return 0;
+
+    return compteur;
 }
 
-void prochainTourTir(Joueur *j, Joueur *j2){
+void prochainTourTir(Joueur *j){
     int choix = -1;
     while(choix<0 || choix>9){
         clear();
@@ -248,35 +226,14 @@ void prochainTourTir(Joueur *j, Joueur *j2){
         affiche_grille(j->tir);
         printf("\n");
 
-        if(couler(j2, 0)==1){
-            printf("- Torpilleur (2 cases)             FLOTTE\n");
+        int cases = 17 - nbBateauEnVie(j);
+        
+        if(cases == 0 || cases == 1){
+            printf("Il vous reste %d case à couler pour remporter la partie.\n", cases);
         } else {
-            printf("- Torpilleur (2 cases)             COULÉ\n");
+            printf("Il vous reste %d cases à couler pour remporter la partie.\n", cases);
         }
-
-        if(couler(j2, 1)==1){
-            printf("- Sous-marin (3 cases)             FLOTTE\n");
-        } else {
-            printf("- Sous-marin (3 cases)             COULÉ\n");
-        }
-
-        if(couler(j2, 2)==1){
-            printf("- Contre-torpilleur (3 cases)      FLOTTE\n");
-        } else {
-            printf("- Contre-torpilleur (3 cases)      COULÉ\n");
-        }
-
-        if(couler(j2, 3)==1){
-            printf("- Croiseur (4 cases)               FLOTTE\n");
-        } else {
-            printf("- Croiseur (4 cases)               COULÉ\n");
-        }
-
-        if(couler(j2, 4)==1){
-            printf("- Porte-avion (5 cases)            FLOTTE\n");
-        } else {
-            printf("- Porte-avion (5 cases)            COULÉ\n");
-        }
+       
         printf("\nAppuyer sur une touche numérique et entrée pour continuer : ");
         scanf("%d", &choix);
     }  
@@ -395,13 +352,8 @@ void jouer(Joueur *j1, Joueur *j2){
 }
 
 int partieTerminee(Joueur *j1, Joueur *j2){
-    if(couler(j1,0)==0 && couler(j1,1)==0 && couler(j1,2)==0 && couler(j1,3)==0 && couler(j1,4)==0){
-        return 2;
-    }
-
-    if(couler(j2,0)==0 && couler(j2,1)==0 && couler(j2,2)==0 && couler(j2,3)==0 && couler(j2,4)==0){
-        return 1;
-    }
+    if(nbBateauEnVie(j1)==17) return 1;
+    if(nbBateauEnVie(j2)==17) return 2;
 
     return 0;
 }
@@ -417,10 +369,10 @@ void jouerPartie(){
     while(partieTerminee(j1, j2)==0){
        if(joueur%2==0){
             jouer(j1,j2);
-            prochainTourTir(j1, j2);
+            prochainTourTir(j1);
         } else {
             jouer(j2,j1);
-            prochainTourTir(j2, j1);
+            prochainTourTir(j2);
         }
         joueur++;
     }
