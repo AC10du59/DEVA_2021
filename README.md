@@ -5,10 +5,11 @@
 - [X] Créer le plateau
 - [X] Créer les bateaux
 - [X] Placer les bateaux
-- [ ] Récupérer les coordonnées du tir
+- [X] Récupérer les coordonnées du tir
 - [ ] Historique des tirs en utilisant ABR 
-- [ ] Analyser le tir
-- [ ] Fin de partie
+- [X] Analyser le tir
+- [X] Fin de partie
+- [ ] Achitecture du projet (fichiers)
 
 (ne pas oublier le contrôle de saisie) 
 
