@@ -149,7 +149,7 @@ void affiche_grille(int grille[TAILLE][TAILLE]){
 }
 
 int nbalea(int borneD, int limite){
-    return rand() % limite + borneD;
+    return rand() % (limite+1) + borneD;
 }
 
 int est_valide(int x, int y, int direction, int taille, int grille[TAILLE][TAILLE]){
@@ -368,7 +368,7 @@ void jouer(Joueur *j1, Joueur *j2){
         scanf("%d", &choix_X);
         printf("- Colonne : ");
         scanf("%d", &choix_Y);
-    } while(choix_X<0 || choix_X>9 || choix_Y<0 || choix_Y>9);
+    } while(choix_X<0 || choix_X>9 || choix_Y<0 || choix_Y>9 || j1->tir[choix_X][choix_Y] != 0);
 
     if(touche(choix_X, choix_Y, j2)==0) j1->tir[choix_X][choix_Y] = 1;
     else j1->tir[choix_X][choix_Y] = 2;
@@ -380,7 +380,7 @@ void jouerOrdi(Joueur *j1, Joueur *j2){
     do{
         choix_X = nbalea(0,9);
         choix_Y = nbalea(0,9);
-    } while(choix_X<0 || choix_X>9 || choix_Y<0 || choix_Y>9);
+    } while(choix_X<0 || choix_X>9 || choix_Y<0 || choix_Y>9 || j1->tir[choix_X][choix_Y] != 0);
 
     if(touche(choix_X, choix_Y, j2)==0) j1->tir[choix_X][choix_Y] = 1;
     else j1->tir[choix_X][choix_Y] = 2;
