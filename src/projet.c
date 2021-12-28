@@ -528,15 +528,67 @@ void jouerPartie(){
 
     clear();
 
-    printf("%d cases coulés pour le joueur 1 :\n", lenBT(j1->bt));
+    printf("%d cases coulés par le joueur 1 :\n", lenBT(j1->bt));
     printBT(j1->bt);
+    printf("\n");
 
-    printf("\n\n%d cases coulés pour le joueur 2 :\n", lenBT(j2->bt));
+    int choix2 = 0;
+    int choix_X1 = -1;
+    int choix_Y1 = -1;
+    do{
+        printf("\n");
+        printf("Chercher une case (taper 1) ou passer aux tirs du joueur 2 (taper 2) : ");
+        scanf("%d", &choix2);
+        if(choix2 == 1){
+            do {            
+                printf("-   Ligne : ");
+                scanf("%d", &choix_X1);
+                printf("- Colonne : ");
+                scanf("%d", &choix_Y1);
+            } while(choix_X1<0 || choix_X1>9 || choix_Y1<0 || choix_Y1>9);
+
+            int caseTest = choix_X1 * 10 + choix_Y1;
+
+            if(search(j1->bt, caseTest) == NULL) {
+                printf("--> Case non touchée\n");
+            } else {
+                printf("--> Case touchée\n");
+            }
+        }
+
+    } while(choix2 != 2);
+
+    clear();
+
+    printf("%d cases coulés par le joueur 2 :\n", lenBT(j2->bt));
     printBT(j2->bt);
+    printf("\n");
 
-    int choix2;
-    printf("\nAppuyer sur une touche numérique pour quitter la partie : ");
-    scanf("%d", &choix2);
+    int choix3 = 0;
+    int choix_X2 = -1;
+    int choix_Y2 = -1;
+    do{
+        printf("\n");
+        printf("Chercher une case (taper 1) ou revenir au menu (taper 2) : ");
+        scanf("%d", &choix3);
+        if(choix3 == 1){
+            do {            
+                printf("-   Ligne : ");
+                scanf("%d", &choix_X2);
+                printf("- Colonne : ");
+                scanf("%d", &choix_Y2);
+            } while(choix_X2<0 || choix_X2>9 || choix_Y2<0 || choix_Y2>9);
+
+            int caseTest2 = choix_X2 * 10 + choix_Y2;
+
+            if(search(j2->bt, caseTest2) == NULL) {
+                printf("--> Case non touchée\n");
+            } else {
+                printf("--> Case touchée\n");
+            }
+        }
+
+    } while(choix3 != 2); 
 
     j1->bt = freeBT(j1->bt);
     j2->bt = freeBT(j2->bt);
@@ -553,8 +605,10 @@ void jouerPartieOrdi(){
 
     while(partieTerminee(j1, ordi)==0){
        if(joueur%2==0){
-            jouer(j1,ordi);
-            prochainTourTir(j1);
+            //jouer(j1,ordi);
+            //prochainTourTir(j1);
+            jouerOrdi(j1,ordi);
+            prochainTourTirOrdi(j1);
         } else {
             jouerOrdi(ordi,j1);
             prochainTourTirOrdi(ordi);
@@ -579,15 +633,67 @@ void jouerPartieOrdi(){
 
     clear();
 
-    printf("%d cases coulés pour le joueur 1 :\n", lenBT(j1->bt));
+    printf("%d cases coulés par le joueur 1 :\n", lenBT(j1->bt));
     printBT(j1->bt);
+    printf("\n");
 
-    printf("\n\n%d cases coulés pour l'ordi :\n", lenBT(ordi->bt));
+    int choix2 = 0;
+    int choix_X1 = -1;
+    int choix_Y1 = -1;
+    do{
+        printf("\n");
+        printf("Chercher une case (taper 1) ou passer aux tirs de l'ordi (taper 2) : ");
+        scanf("%d", &choix2);
+        if(choix2 == 1){
+            do {            
+                printf("-   Ligne : ");
+                scanf("%d", &choix_X1);
+                printf("- Colonne : ");
+                scanf("%d", &choix_Y1);
+            } while(choix_X1<0 || choix_X1>9 || choix_Y1<0 || choix_Y1>9);
+
+            int caseTest = choix_X1 * 10 + choix_Y1;
+
+            if(search(j1->bt, caseTest) == NULL) {
+                printf("--> Case non touchée\n");
+            } else {
+                printf("--> Case touchée\n");
+            }
+        }
+
+    } while(choix2 != 2);
+
+    clear();
+
+    printf("%d cases coulés par l'ordi :\n", lenBT(ordi->bt));
     printBT(ordi->bt);
+    printf("\n");
 
-    int choix2;
-    printf("\nAppuyer sur une touche numérique pour quitter la partie : ");
-    scanf("%d", &choix2);
+    int choix3 = 0;
+    int choix_X2 = -1;
+    int choix_Y2 = -1;
+    do{
+        printf("\n");
+        printf("Chercher une case (taper 1) ou revenir au menu (taper 2) : ");
+        scanf("%d", &choix3);
+        if(choix3 == 1){
+            do {            
+                printf("-   Ligne : ");
+                scanf("%d", &choix_X2);
+                printf("- Colonne : ");
+                scanf("%d", &choix_Y2);
+            } while(choix_X2<0 || choix_X2>9 || choix_Y2<0 || choix_Y2>9);
+
+            int caseTest2 = choix_X2 * 10 + choix_Y2;
+
+            if(search(ordi->bt, caseTest2) == NULL) {
+                printf("--> Case non touchée\n");
+            } else {
+                printf("--> Case touchée\n");
+            }
+        }
+
+    } while(choix3 != 2); 
 
     j1->bt = freeBT(j1->bt);
     ordi->bt = freeBT(ordi->bt);
@@ -596,26 +702,5 @@ void jouerPartieOrdi(){
 /*------------------------------ FONCTION MAIN -------------------------------*/
 int main(int argc, char *argv[]) {
     menu();
-
-    /*BinTree *bt = empty_bintree();
-
-    bt = insert(bt, 0);
-    bt = insert(bt, -5);
-    bt = insert(bt, -10);
-    bt = insert(bt, -3);
-    bt = insert(bt, 5);
-    bt = insert(bt, 10);
-    bt = insert(bt, 6);
-    bt = insert(bt, 8);
-    bt = insert(bt, 14);
-
-    printBT(bt);
-
-    printf("-> %d\n", search(bt, 6)->data);
-
-    printf("Longueur : %d\n", lenBT(bt));
-
-    bt = freeBT(bt);*/
-
     return 0;
 }
