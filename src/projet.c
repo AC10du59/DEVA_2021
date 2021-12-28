@@ -464,12 +464,118 @@ void jouerPartieOrdi(){
     int choix;
     printf("\nAppuyer sur une touche numérique pour quitter la partie : ");
     scanf("%d", &choix);
-
 }
+
+
+/*---------------------------------- ARBRE -----------------------------------*/
+
+typedef struct Node {
+    int data;
+    struct Node *left;
+    struct Node *right;
+}BinTree, Node;
+
+BinTree *empty_bintree(){
+    return NULL;
+}
+
+Node *create_node(int data){
+    Node *node = malloc(sizeof(Node));
+    if(!node) return NULL;
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+
+    return node;
+}
+
+BinTree *insert(BinTree *bt, int data){
+    BinTree *prec;
+    BinTree *head = bt;
+
+    if(!bt) return create_node(data);
+
+    while(bt){
+        prec = bt;
+        if(data < bt->data){
+            bt = bt->left;
+        } else {
+            bt = bt->right;
+        }
+    }
+
+    if(data < prec->data){
+        prec->left = create_node(data);
+    } else {
+        prec->right = create_node(data);
+    }
+
+    return head;
+}
+
+BinTree *search(BinTree *bt, int data){
+    while(bt){
+        if(data < bt->data){
+            bt = bt->left;
+        } else {
+            if(data > bt->data){
+                bt = bt->right;
+            } else {
+                return bt;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+void printBT(BinTree *bt){
+    if(bt){
+        printBT(bt->left);
+        printf("%d\n", bt->data);
+        printBT(bt->right);
+    }
+}
+
+BinTree *freeBT(BinTree *bt){
+    if(bt){
+        bt->left = freeBT(bt->left);
+        bt->right = freeBT(bt->right);
+        free(bt);
+    }
+    return NULL;
+}
+
+int lenBT(BinTree *bt){
+    if(!bt) return 0;
+    return 1 + lenBT(bt->left) + lenBT(bt->right);
+}
+
+
 
 
 /*------------------------------ FONCTION MAIN -------------------------------*/
 int main(int argc, char *argv[]) {
-    menu();
+    //menu();
+
+    BinTree *bt = empty_bintree();
+    bt = insert(bt, 0);
+    bt = insert(bt, -5);
+    bt = insert(bt, -10);
+    bt = insert(bt, -3);
+    bt = insert(bt, 5);
+    bt = insert(bt, 10);
+    bt = insert(bt, 6);
+    bt = insert(bt, 8);
+    bt = insert(bt, 14);
+
+    printBT(bt);
+
+    printf("-> %d\n", search(bt, 6)->data);
+
+    printf("Longueur : %d\n", lenBT(bt));
+
+    bt = freeBT(bt);
+
     return 0;
 }
