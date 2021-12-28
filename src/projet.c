@@ -69,6 +69,96 @@ void menu_aide(){
     menu_aide();
 }
 
+/*---------------------------------- ARBRE -----------------------------------*/
+
+typedef struct Node {
+    int data;
+    struct Node *left;
+    struct Node *right;
+}BinTree, Node;
+
+BinTree *empty_bintree(){
+    return NULL;
+}
+
+Node *create_node(int data){
+    Node *node = malloc(sizeof(Node));
+    if(!node) return NULL;
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+
+    return node;
+}
+
+BinTree *insert(BinTree *bt, int data){
+    BinTree *prec;
+    BinTree *head = bt;
+
+    if(!bt) return create_node(data);
+
+    while(bt){
+        prec = bt;
+        if(data < bt->data){
+            bt = bt->left;
+        } else {
+            bt = bt->right;
+        }
+    }
+
+    if(data < prec->data){
+        prec->left = create_node(data);
+    } else {
+        prec->right = create_node(data);
+    }
+
+    return head;
+}
+
+BinTree *search(BinTree *bt, int data){
+    while(bt){
+        if(data < bt->data){
+            bt = bt->left;
+        } else {
+            if(data > bt->data){
+                bt = bt->right;
+            } else {
+                return bt;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+void printBT(BinTree *bt){
+    if(bt){
+        printBT(bt->left);
+        if(bt->data < 10){
+            printf("Ligne : 0 | Colonne : %d\n", bt->data);
+        } else {
+            int l = bt->data / 10;
+            int c = bt->data % 10;
+            printf("Ligne : %d | Colonne : %d\n", l, c);
+        }
+        printBT(bt->right);
+    }
+}
+
+BinTree *freeBT(BinTree *bt){
+    if(bt){
+        bt->left = freeBT(bt->left);
+        bt->right = freeBT(bt->right);
+        free(bt);
+    }
+    return NULL;
+}
+
+int lenBT(BinTree *bt){
+    if(!bt) return 0;
+    return 1 + lenBT(bt->left) + lenBT(bt->right);
+}
+
 
 /*----------------------------- BATAILLE NAVALE ------------------------------*/
 
@@ -88,6 +178,7 @@ typedef struct joueur {
     int plateau[TAILLE][TAILLE];
     int tir[TAILLE][TAILLE];
     Navire *bateaux[5];
+    BinTree *bt;
 } Joueur;
 
 /*
@@ -130,6 +221,7 @@ Joueur *creerJoueur(int id) {
     initialiser_grille(j->plateau);
     initialiser_grille(j->tir);
     initBateau(j->bateaux);
+    j->bt = empty_bintree();
     return j;
 }
 
@@ -370,6 +462,9 @@ void jouer(Joueur *j1, Joueur *j2){
         scanf("%d", &choix_Y);
     } while(choix_X<0 || choix_X>9 || choix_Y<0 || choix_Y>9 || j1->tir[choix_X][choix_Y] != 0);
 
+    int caseNB = choix_X * 10 + choix_Y;
+    j1->bt = insert(j1->bt, caseNB);
+
     if(touche(choix_X, choix_Y, j2)==0) j1->tir[choix_X][choix_Y] = 1;
     else j1->tir[choix_X][choix_Y] = 2;
 }
@@ -381,6 +476,9 @@ void jouerOrdi(Joueur *j1, Joueur *j2){
         choix_X = nbalea(0,9);
         choix_Y = nbalea(0,9);
     } while(choix_X<0 || choix_X>9 || choix_Y<0 || choix_Y>9 || j1->tir[choix_X][choix_Y] != 0);
+
+    int caseNB = choix_X * 10 + choix_Y;
+    j1->bt = insert(j1->bt, caseNB);
 
     if(touche(choix_X, choix_Y, j2)==0) j1->tir[choix_X][choix_Y] = 1;
     else j1->tir[choix_X][choix_Y] = 2;
@@ -425,9 +523,23 @@ void jouerPartie(){
     }
 
     int choix;
-    printf("\nAppuyer sur une touche numérique pour quitter la partie : ");
+    printf("\nAppuyer sur une touche numérique pour voir l'historique des tirs de la partie : ");
     scanf("%d", &choix);
 
+    clear();
+
+    printf("%d cases coulés pour le joueur 1 :\n", lenBT(j1->bt));
+    printBT(j1->bt);
+
+    printf("\n\n%d cases coulés pour le joueur 2 :\n", lenBT(j2->bt));
+    printBT(j2->bt);
+
+    int choix2;
+    printf("\nAppuyer sur une touche numérique pour quitter la partie : ");
+    scanf("%d", &choix2);
+
+    j1->bt = freeBT(j1->bt);
+    j2->bt = freeBT(j2->bt);
 }
 
 void jouerPartieOrdi(){
@@ -462,103 +574,31 @@ void jouerPartieOrdi(){
     }
 
     int choix;
-    printf("\nAppuyer sur une touche numérique pour quitter la partie : ");
+    printf("\nAppuyer sur une touche numérique pour voir l'historique des tirs de la partie : ");
     scanf("%d", &choix);
+
+    clear();
+
+    printf("%d cases coulés pour le joueur 1 :\n", lenBT(j1->bt));
+    printBT(j1->bt);
+
+    printf("\n\n%d cases coulés pour l'ordi :\n", lenBT(ordi->bt));
+    printBT(ordi->bt);
+
+    int choix2;
+    printf("\nAppuyer sur une touche numérique pour quitter la partie : ");
+    scanf("%d", &choix2);
+
+    j1->bt = freeBT(j1->bt);
+    ordi->bt = freeBT(ordi->bt);
 }
-
-
-/*---------------------------------- ARBRE -----------------------------------*/
-
-typedef struct Node {
-    int data;
-    struct Node *left;
-    struct Node *right;
-}BinTree, Node;
-
-BinTree *empty_bintree(){
-    return NULL;
-}
-
-Node *create_node(int data){
-    Node *node = malloc(sizeof(Node));
-    if(!node) return NULL;
-    node->data = data;
-    node->left = NULL;
-    node->right = NULL;
-
-    return node;
-}
-
-BinTree *insert(BinTree *bt, int data){
-    BinTree *prec;
-    BinTree *head = bt;
-
-    if(!bt) return create_node(data);
-
-    while(bt){
-        prec = bt;
-        if(data < bt->data){
-            bt = bt->left;
-        } else {
-            bt = bt->right;
-        }
-    }
-
-    if(data < prec->data){
-        prec->left = create_node(data);
-    } else {
-        prec->right = create_node(data);
-    }
-
-    return head;
-}
-
-BinTree *search(BinTree *bt, int data){
-    while(bt){
-        if(data < bt->data){
-            bt = bt->left;
-        } else {
-            if(data > bt->data){
-                bt = bt->right;
-            } else {
-                return bt;
-            }
-        }
-    }
-
-    return NULL;
-}
-
-void printBT(BinTree *bt){
-    if(bt){
-        printBT(bt->left);
-        printf("%d\n", bt->data);
-        printBT(bt->right);
-    }
-}
-
-BinTree *freeBT(BinTree *bt){
-    if(bt){
-        bt->left = freeBT(bt->left);
-        bt->right = freeBT(bt->right);
-        free(bt);
-    }
-    return NULL;
-}
-
-int lenBT(BinTree *bt){
-    if(!bt) return 0;
-    return 1 + lenBT(bt->left) + lenBT(bt->right);
-}
-
-
-
 
 /*------------------------------ FONCTION MAIN -------------------------------*/
 int main(int argc, char *argv[]) {
-    //menu();
+    menu();
 
-    BinTree *bt = empty_bintree();
+    /*BinTree *bt = empty_bintree();
+
     bt = insert(bt, 0);
     bt = insert(bt, -5);
     bt = insert(bt, -10);
@@ -575,7 +615,7 @@ int main(int argc, char *argv[]) {
 
     printf("Longueur : %d\n", lenBT(bt));
 
-    bt = freeBT(bt);
+    bt = freeBT(bt);*/
 
     return 0;
 }
