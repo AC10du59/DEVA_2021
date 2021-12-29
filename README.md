@@ -11,5 +11,7 @@
 - [X] Fin de partie
 - [X] Achitecture du projet (fichiers)
 
+Commande à exécuter : make (puis) ./projet
+
 ### CARRAY Aurélien
 ### KOENIG Estebann
