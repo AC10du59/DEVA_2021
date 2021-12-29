@@ -12,8 +12,8 @@
 - [X] Achitecture du projet (fichiers)
 
 Commande à exécuter : 
---> make
---> ./projet
+- make
+- ./projet
 
 ### CARRAY Aurélien
 ### KOENIG Estebann
