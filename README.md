@@ -6,12 +6,10 @@
 - [X] Créer les bateaux
 - [X] Placer les bateaux
 - [X] Récupérer les coordonnées du tir
-- [ ] Historique des tirs en utilisant ABR 
+- [X] Historique des tirs en utilisant ABR 
 - [X] Analyser le tir
 - [X] Fin de partie
-- [ ] Achitecture du projet (fichiers)
-
-(ne pas oublier le contrôle de saisie) 
+- [X] Achitecture du projet (fichiers)
 
 ### CARRAY Aurélien
 ### KOENIG Estebann
