@@ -605,10 +605,8 @@ void jouerPartieOrdi(){
 
     while(partieTerminee(j1, ordi)==0){
        if(joueur%2==0){
-            //jouer(j1,ordi);
-            //prochainTourTir(j1);
-            jouerOrdi(j1,ordi);
-            prochainTourTirOrdi(j1);
+            jouer(j1,ordi);
+            prochainTourTir(j1);
         } else {
             jouerOrdi(ordi,j1);
             prochainTourTirOrdi(ordi);
