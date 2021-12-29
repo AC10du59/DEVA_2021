@@ -1,5 +1,8 @@
 # Projet de développement d'application
 
+### CARRAY Aurélien
+### KOENIG Estebann
+
 ## Taches à réaliser :
 - [X] Créer le menu  
 - [X] Créer le plateau
@@ -14,6 +17,3 @@
 ## Commande à exécuter : 
 - make
 - ./projet
-
-### CARRAY Aurélien
-### KOENIG Estebann
