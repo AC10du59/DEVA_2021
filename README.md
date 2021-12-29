@@ -11,7 +11,7 @@
 - [X] Fin de partie
 - [X] Achitecture du projet (fichiers)
 
-Commande à exécuter : 
+## Commande à exécuter : 
 - make
 - ./projet
 
