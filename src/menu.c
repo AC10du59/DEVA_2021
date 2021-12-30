@@ -4,7 +4,7 @@
 #include "multi.h"
 #include "ordi.h"
 
-const char * MESSAGE_AIDE = "Bienvenue dans le jeu BattleShip !\n\nNous sommes ici pour vous aider et expliquer le jeu.\nLe but de ce jeu est dans un premier temps de placer les bateaux sur le plateau de jeu.\nVous aurez 5 bateaux de tailles différentes à placer. \nVotre adversaire aura exactement les mêmes bateaux que vous.\nUne fois vos bateaux placés, vous devrez couler les bateaux de votre adversaire.\nPour trouver les bateaux, il vous suffira de donner les coordonnées X et Y par rapport au plateau.\nVous essaierez de toucher le bateau l'un aprés l'autre.\nSi vous touchez le bateau, vous serez informé et vous pourrez rejouer immédiatement.\nSi vous ne le touchez pas, ce sera à l'adversaire de jouer.\nLe premier à couler tous les bateaux adverses a gagné.\n\nBonne chance !!!\n\n\n";
+const char * MESSAGE_AIDE = "Bienvenue dans le jeu BattleShip !\n\nVoici les règles du jeu :\n\nAu début du jeu, chaque joueur place à sa guise tous les bateaux sur sa grille de façon stratégique. Le but étant de compliquer au maximum la tache de son adversaire, c’est-à-dire détruire tous vos navires. Bien entendu, le joueur ne voit pas la grille de son adversaire.\n\nVoici les symboles sur la grille :\n\n   ~ <==> eau\n   x <==> touché\n   o <==> plouf\n\nUne fois tous les bateaux en jeu, la partie peut commencer. Un à un, les joueurs se tirent dessus pour détruire les navires ennemis. Le premier joueur à couler les bateaux de l'ennemi remporte la partie.\n\nA la fin de la partie, vous pourrez consulter l'historique des tirs de la partie.\n\nBonne chance !!!\n\n\n";
 
 void menu(){
     clear();
