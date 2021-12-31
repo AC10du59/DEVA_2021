@@ -25,7 +25,6 @@ Navire *creerNavire(char *nom, int posX, int posY, int taille, int s) {
     a->x = posX;
     a->y = posY;
     a->taille = taille;
-    a->coule = 0;
     return a;
 }
 

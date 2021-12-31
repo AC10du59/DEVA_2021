@@ -10,7 +10,6 @@ typedef struct navire {
     int x;
     int y;
     int taille;
-    int coule; /*0 non 1 oui*/
 } Navire;
 
 typedef struct joueur {
