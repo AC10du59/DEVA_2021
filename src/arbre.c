@@ -2,10 +2,6 @@
 #include <stdlib.h>
 #include "arbre.h"
 
-BinTree *empty_bintree(){
-    return NULL;
-}
-
 Node *create_node(int data){
     Node *node = malloc(sizeof(Node));
     if(!node) return NULL;
