@@ -3,16 +3,8 @@
 ### CARRAY Aurélien
 ### KOENIG Estebann
 
-## Taches à réaliser :
-- [X] Créer le menu  
-- [X] Créer le plateau
-- [X] Créer les bateaux
-- [X] Placer les bateaux
-- [X] Récupérer les coordonnées du tir
-- [X] Historique des tirs en utilisant ABR 
-- [X] Analyser le tir
-- [X] Fin de partie
-- [X] Achitecture du projet (fichiers)
+## Compte-rendu du projet :
+[Compte-Rendu DEVA.pdf](https://github.com/AC10du59/DEVA_2021/files/7799319/Compte-Rendu.DEVA.pdf)
 
 ## Commande à exécuter : 
 - make
